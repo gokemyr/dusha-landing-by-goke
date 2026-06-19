@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Душа — книжный магазин в Ярославле</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Manrope', sans-serif; background: #F4ECDE; color: #241B12; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
+  ::selection { background: #E0A52B; color: #241B12; }
+  a { color: inherit; }
+  button { font-family: inherit; }
+  @keyframes dushaFloat   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes dushaSlide   { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes dushaFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes dushaMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Hover utilities (заменяет style-hover из dc) */
+  .nav-link { color: #241B12; text-decoration: none; padding: 8px 0; opacity: 0.7; transition: opacity .2s; }
+  .nav-link:hover { opacity: 1; }
+  .nav-link.active { opacity: 1; border-bottom: 1.5px solid #241B12; }
+  .btn-dark { background: #241B12; color: #F4ECDE; border: none; cursor: pointer; transition: background .2s; }
+  .btn-dark:hover { background: #3A2418; }
+  .btn-gold { background: #E0A52B; color: #241B12; border: none; cursor: pointer; transition: background .2s; }
+  .btn-gold:hover { background: #F4CB52; }
+  .btn-outline { background: #F4ECDE; color: #241B12; border: 1.5px solid #241B12; cursor: pointer; transition: background .2s, color .2s; }
+  .btn-outline:hover { background: #241B12; color: #F4ECDE; }
+  .icon-btn { background: transparent; border: 1px solid rgba(36,27,18,.2); border-radius: 50%; cursor: pointer; color: #241B12; transition: background .2s, color .2s, border-color .2s; }
+  .icon-btn:hover { background: #E0A52B; color: #241B12; border-color: #E0A52B; }
+  .book-card .cover { transition: transform .3s, box-shadow .3s; }
+  .book-card:hover .cover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(36,27,18,.18); }
+  .classic-row { transition: border-color .2s, transform .2s; }
+  .classic-row:hover { border-color: #E0A52B; transform: translateX(4px); }
+  .event-card { transition: background .2s, border-color .2s; }
+  .event-card:hover { background: rgba(244,236,222,.04); border-color: #E0A52B; }
+  .footer-link { color: rgba(244,236,222,.75); text-decoration: none; transition: color .2s; }
+  .footer-link:hover { color: #E0A52B; }
+  .footer-link-muted { color: rgba(244,236,222,.55); text-decoration: none; transition: color .2s; }
+  .footer-link-muted:hover { color: #E0A52B; }
+  .social-link { width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(244,236,222,.25); display: flex; align-items: center; justify-content: center; color: #F4ECDE; text-decoration: none; transition: background .2s, color .2s, border-color .2s; }
+  .social-link:hover { background: #E0A52B; color: #241B12; border-color: #E0A52B; }
+  .filter-chip { padding: 9px 18px; border-radius: 999px; background: transparent; color: #241B12; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 500; border: 1px solid rgba(36,27,18,.2); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+  .filter-chip:hover { border-color: #241B12; }
+  .filter-chip.active { background: #241B12; color: #F4ECDE; border-color: #241B12; }
+  .add-circle { background: #241B12; color: #F4ECDE; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
+  .add-circle:hover { background: #E0A52B; color: #241B12; }
+
+  /* Cart drawer */
+  #cart-overlay { position: fixed; inset: 0; background: rgba(36,27,18,.5); z-index: 100; animation: dushaFadeIn .2s ease-out; }
+  #cart-drawer  { position: fixed; top: 0; right: 0; bottom: 0; width: 460px; max-width: 100vw; background: #F4ECDE; z-index: 101; display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(36,27,18,.25); animation: dushaSlide .3s ease-out; }
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .about-grid, .classics-layout { grid-template-columns: 1fr !important; gap: 40px !important; }
+    .books-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .events-grid { grid-template-columns: 1fr !important; }
+    .footer-grid  { grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
+    .hero-h1 { font-size: 88px !important; }
+    .section-h2 { font-size: 48px !important; }
+    .nav-main { display: none !important; }
+    .hero-section, .catalog-section, .about-section, .classics-section, .new-section, .events-section, .newsletter-section, .site-footer { padding-left: 24px !important; padding-right: 24px !important; }
+  }
+  @media (max-width: 560px) {
+    .books-grid { grid-template-columns: 1fr !important; }
+    .footer-grid  { grid-template-columns: 1fr !important; }
+    .hero-h1 { font-size: 64px !important; }
+    .section-h2 { font-size: 38px !important; }
+    .stat-row { gap: 24px !important; flex-wrap: wrap; }
+    #cart-drawer { width: 100vw !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== TOP MARQUEE ============== -->
+<div style="background:#241B12;color:#E0A52B;padding:10px 0;overflow:hidden;font-size:13px;letter-spacing:.18em;text-transform:uppercase;border-bottom:1px solid #3A2418;">
+  <div style="display:flex;gap:64px;white-space:nowrap;animation:dushaMarquee 40s linear infinite;width:max-content;">
+    <span>★ Бесплатная доставка от 1 500 ₽ по Ярославлю</span>
+    <span>· Книжный клуб каждый четверг ·</span>
+    <span>★ Кофе бесплатно при покупке от 2 книг</span>
+    <span>· Авторские подборки от продавцов ·</span>
+    <span>★ Бесплатная доставка от 1 500 ₽ по Ярославлю</span>
+    <span>· Книжный клуб каждый четверг ·</span>
+    <span>★ Кофе бесплатно при покупке от 2 книг</span>
+    <span>· Авторские подборки от продавцов ·</span>
+  </div>
+</div>
+
+<!-- ============== HEADER ============== -->
+<header style="position:sticky;top:0;z-index:50;background:rgba(244,236,222,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(36,27,18,.08);">
+  <div style="max-width:1280px;margin:0 auto;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px;">
+    <a href="#hero" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:#241B12;">
+      <svg width="44" height="44" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="48" fill="#8A6F57" stroke="#E0A52B" stroke-width="1.2"/>
+        <circle cx="50" cy="32" r="11" fill="#241B12"/>
+        <circle cx="40" cy="40" r="10" fill="#241B12"/>
+        <circle cx="60" cy="40" r="10" fill="#241B12"/>
+        <rect x="48" y="44" width="4" height="22" fill="#241B12"/>
+        <rect x="34" y="66" width="32" height="4" rx="2" fill="#241B12"/>
+        <rect x="29" y="74" width="42" height="4" rx="2" fill="#241B12"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;line-height:1;">
+        <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:26px;font-weight:600;color:#241B12;letter-spacing:.02em;">Душа</span>
+        <span style="font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:#8A6F57;margin-top:4px;">книжный · Ярославль</span>
+      </div>
+    </a>
+
+    <nav class="nav-main" style="display:flex;align-items:center;gap:36px;font-size:14px;font-weight:500;">
+      <a href="#hero" class="nav-link active">Главная</a>
+      <a href="#catalog" class="nav-link">Каталог</a>
+      <a href="#about" class="nav-link">О магазине</a>
+      <a href="#events" class="nav-link">События</a>
+      <a href="#contacts" class="nav-link">Контакты</a>
+    </nav>
+
+    <div style="display:flex;align-items:center;gap:18px;">
+      <button style="background:none;border:none;padding:8px;cursor:pointer;color:#241B12;display:flex;align-items:center;justify-content:center;" aria-label="Поиск">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <button id="cart-open-btn" class="btn-dark" style="padding:11px 18px;font-size:13px;font-weight:600;letter-spacing:.04em;border-radius:999px;display:flex;align-items:center;gap:9px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Корзина
+        <span id="cart-badge" style="background:#E0A52B;color:#241B12;min-width:22px;height:22px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;padding:0 6px;">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section id="hero" class="hero-section" style="position:relative;padding:80px 48px 100px;max-width:1280px;margin:0 auto;">
+  <div class="hero-grid" style="display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:center;position:relative;">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#8A6F57;margin-bottom:36px;">
+        <span style="width:36px;height:1px;background:#8A6F57;"></span>
+        Книжный магазин с 2021 года
+      </div>
+      <h1 class="hero-h1" style="font-family:'Playfair Display',serif;font-weight:500;font-size:140px;line-height:.95;letter-spacing:-.02em;margin:0 0 32px;color:#241B12;">
+        Найдите<br>
+        <span style="font-style:italic;color:#8A6F57;">путь</span> к своей<br>
+        <span style="position:relative;display:inline-block;">
+          душе
+          <svg style="position:absolute;left:0;bottom:-8px;width:100%;" height="18" viewBox="0 0 300 18" preserveAspectRatio="none">
+            <path d="M2 12 Q 75 2, 150 10 T 298 8" stroke="#E0A52B" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </svg>
+        </span><span style="font-style:italic;">.</span>
+      </h1>
+      <p style="font-size:17px;line-height:1.6;color:#5A4A3A;max-width:480px;margin:0 0 44px;">
+        Каждая книга — это новая страница вашей жизни. Кураторская подборка прозы, нон-фикшн, искусства и редких изданий в самом сердце Ярославля.
+      </p>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+        <a href="#catalog" class="btn-dark" style="padding:18px 32px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:12px;">
+          Открыть каталог
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#popular" style="color:#241B12;padding:18px 4px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:10px;border-bottom:1.5px solid #241B12;">
+          Подборка недели
+        </a>
+      </div>
+      <div class="stat-row" style="display:flex;gap:56px;margin-top:72px;padding-top:36px;border-top:1px solid rgba(36,27,18,.15);">
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-weight:500;font-size:36px;color:#241B12;line-height:1;">2 500<span style="color:#E0A52B;">+</span></div>
+          <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8A6F57;margin-top:8px;">книг в каталоге</div>
+        </div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-weight:500;font-size:36px;color:#241B12;line-height:1;">80<span style="color:#E0A52B;">+</span></div>
+          <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8A6F57;margin-top:8px;">событий в год</div>
+        </div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-weight:500;font-size:36px;color:#241B12;line-height:1;">12</div>
+          <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8A6F57;margin-top:8px;">авторских подборок</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;min-height:480px;">
+      <svg style="position:absolute;width:480px;height:480px;animation:dushaFloat 6s ease-in-out infinite;" viewBox="0 0 500 500">
+        <defs>
+          <path id="dushaCirclePath" d="M 250 250 m -220 0 a 220 220 0 1 1 440 0 a 220 220 0 1 1 -440 0"/>
+        </defs>
+        <text font-family="Manrope" font-size="14" letter-spacing="6" fill="#8A6F57" style="text-transform:uppercase;">
+          <textPath href="#dushaCirclePath">КНИЖНЫЙ МАГАЗИН · ЯРОСЛАВЛЬ · С 2021 · ДУША · </textPath>
+        </text>
+      </svg>
+      <div style="width:380px;height:380px;border-radius:50%;background:#8A6F57;border:2px solid #E0A52B;box-shadow:0 20px 60px rgba(36,27,18,.15);display:flex;align-items:center;justify-content:center;position:relative;">
+        <svg width="240" height="240" viewBox="0 0 100 100">
+          <circle cx="50" cy="32" r="14" fill="#241B12"/>
+          <circle cx="36" cy="42" r="13" fill="#241B12"/>
+          <circle cx="64" cy="42" r="13" fill="#241B12"/>
+          <rect x="47" y="48" width="6" height="26" fill="#241B12"/>
+          <rect x="28" y="74" width="44" height="5" rx="2.5" fill="#241B12"/>
+          <rect x="22" y="83" width="56" height="5" rx="2.5" fill="#241B12"/>
+        </svg>
+        <div style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);background:#F4ECDE;padding:8px 28px;border-radius:999px;border:1px solid #E0A52B;font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:#E0A52B;font-weight:600;">Душа</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== POPULAR THIS WEEK ============== -->
+<section id="popular" class="catalog-section" style="padding:60px 48px 80px;max-width:1280px;margin:0 auto;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;gap:48px;flex-wrap:wrap;">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#8A6F57;margin-bottom:24px;">
+        <span style="width:36px;height:1px;background:#8A6F57;"></span>
+        Популярное на неделе
+      </div>
+      <h2 class="section-h2" style="font-family:'Playfair Display',serif;font-weight:500;font-size:72px;line-height:1;margin:0;color:#241B12;letter-spacing:-.015em;">
+        Что <span style="font-style:italic;color:#8A6F57;">читают</span><br>сейчас в «Душе»
+      </h2>
+    </div>
+    <div style="max-width:360px;text-align:right;">
+      <p style="font-size:15px;line-height:1.6;color:#5A4A3A;margin:0 0 20px;">
+        Выбор постоянных читателей и наших продавцов. Книги, которые этой неделей чаще всего находят дорогу домой.
+      </p>
+      <a href="#catalog" style="color:#241B12;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.06em;border-bottom:1.5px solid #E0A52B;padding-bottom:2px;">ВЕСЬ КАТАЛОГ →</a>
+    </div>
+  </div>
+
+  <div id="filter-chips" style="display:flex;gap:10px;margin-bottom:40px;flex-wrap:wrap;">
+    <button class="filter-chip active" data-filter="all">Все</button>
+    <button class="filter-chip" data-filter="Современная проза">Проза</button>
+    <button class="filter-chip" data-filter="Литературная проза">Нон-фикшн</button>
+    <button class="filter-chip" data-filter="Магический реализм">Поэзия</button>
+    <button class="filter-chip" data-filter="искусство">Искусство</button>
+    <button class="filter-chip" data-filter="дети">Дети</button>
+  </div>
+
+  <div id="popular-grid" class="books-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;"></div>
+</section>
+
+<!-- ============== EDITORIAL QUOTE STRIP ============== -->
+<section style="padding:60px 48px;background:#241B12;color:#F4ECDE;margin:60px 0;">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:42px;line-height:1.3;letter-spacing:-.01em;">
+      «Книга <span style="color:#E0A52B;">—</span> это сон, который снится тебе наяву.<br>
+      В «Душе» мы собираем сны, к которым хочется возвращаться.»
+    </div>
+    <div style="margin-top:32px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#B5926B;">— Команда магазина</div>
+  </div>
+</section>
+
+<!-- ============== ABOUT ============== -->
+<section id="about" class="about-section" style="padding:60px 48px 120px;max-width:1280px;margin:0 auto;">
+  <div class="about-grid" style="display:grid;grid-template-columns:.9fr 1.1fr;gap:80px;align-items:center;">
+    <div style="position:relative;height:580px;min-height:480px;">
+      <div style="position:absolute;top:0;left:0;width:78%;height:70%;background:linear-gradient(135deg,#8A6F57 0%,#B5926B 100%);border-radius:4px;overflow:hidden;display:flex;align-items:flex-end;padding:28px;box-shadow:0 16px 40px rgba(36,27,18,.18);">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.35;" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+          <g fill="#241B12">
+            <rect x="20" y="60"  width="22" height="80"/><rect x="44" y="40"  width="18" height="100"/>
+            <rect x="64" y="50"  width="26" height="90"/><rect x="92" y="35"  width="20" height="105"/>
+            <rect x="114" y="60" width="24" height="80"/><rect x="140" y="45" width="20" height="95"/>
+            <rect x="162" y="55" width="28" height="85"/><rect x="192" y="40" width="20" height="100"/>
+            <rect x="214" y="50" width="22" height="90"/><rect x="238" y="35" width="26" height="105"/>
+            <rect x="266" y="55" width="20" height="85"/><rect x="288" y="45" width="24" height="95"/>
+            <rect x="314" y="60" width="20" height="80"/><rect x="336" y="40" width="26" height="100"/>
+            <rect x="364" y="50" width="20" height="90"/>
+            <rect x="15" y="138" width="375" height="6"/>
+            <rect x="20" y="180" width="26" height="80"/><rect x="48" y="160" width="20" height="100"/>
+            <rect x="70" y="170" width="24" height="90"/><rect x="96" y="155" width="18" height="105"/>
+            <rect x="116" y="180" width="22" height="80"/><rect x="140" y="165" width="26" height="95"/>
+            <rect x="168" y="175" width="20" height="85"/><rect x="190" y="160" width="22" height="100"/>
+            <rect x="214" y="170" width="28" height="90"/><rect x="244" y="155" width="20" height="105"/>
+            <rect x="266" y="175" width="24" height="85"/><rect x="292" y="165" width="20" height="95"/>
+            <rect x="314" y="180" width="22" height="80"/><rect x="338" y="160" width="26" height="100"/>
+            <rect x="366" y="170" width="20" height="90"/>
+            <rect x="15" y="258" width="375" height="6"/>
+            <rect x="20" y="300" width="22" height="80"/><rect x="44" y="280" width="20" height="100"/>
+            <rect x="66" y="290" width="26" height="90"/><rect x="94" y="275" width="18" height="105"/>
+            <rect x="114" y="300" width="24" height="80"/><rect x="140" y="285" width="20" height="95"/>
+            <rect x="162" y="295" width="28" height="85"/><rect x="192" y="280" width="20" height="100"/>
+            <rect x="214" y="290" width="22" height="90"/><rect x="238" y="275" width="26" height="105"/>
+            <rect x="266" y="295" width="20" height="85"/><rect x="288" y="285" width="24" height="95"/>
+            <rect x="314" y="300" width="20" height="80"/><rect x="336" y="280" width="26" height="100"/>
+            <rect x="15" y="378" width="375" height="6"/>
+          </g>
+        </svg>
+        <div style="position:relative;color:#F4ECDE;z-index:1;">
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:42px;line-height:1;margin-bottom:8px;">наш зал</div>
+          <div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.7;">17 стеллажей · 4 кресла · 1 кот</div>
+        </div>
+      </div>
+
+      <div style="position:absolute;bottom:0;right:0;width:60%;height:50%;background:#F4ECDE;border:1.5px solid #E0A52B;border-radius:4px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 16px 40px rgba(36,27,18,.14);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#8A6F57;">кофейная зона</div>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#241B12" stroke-width="1.5">
+            <path d="M6 11h18v9a5 5 0 0 1-5 5h-8a5 5 0 0 1-5-5z"/>
+            <path d="M24 14h2a3 3 0 0 1 0 6h-2"/>
+            <path d="M12 4c0 2-2 2-2 4s2 2 2 4"/>
+            <path d="M17 4c0 2-2 2-2 4s2 2 2 4"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:38px;line-height:1;color:#241B12;margin-bottom:12px;">кофе + книга</div>
+          <div style="font-size:13px;line-height:1.5;color:#5A4A3A;">Кружка свежесваренного — бесплатно при покупке двух книг.</div>
+        </div>
+      </div>
+
+      <div style="position:absolute;top:50%;left:70%;transform:rotate(-12deg);background:#E0A52B;color:#241B12;width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:'Playfair Display',serif;font-style:italic;text-align:center;box-shadow:0 8px 20px rgba(36,27,18,.2);">
+        <div style="font-size:12px;letter-spacing:.1em;font-style:normal;font-family:'Manrope';font-weight:600;">с 2021</div>
+        <div style="font-size:28px;line-height:1;">года</div>
+      </div>
+    </div>
+
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#8A6F57;margin-bottom:28px;">
+        <span style="width:36px;height:1px;background:#8A6F57;"></span>
+        О магазине
+      </div>
+      <h2 class="section-h2" style="font-family:'Playfair Display',serif;font-weight:500;font-size:64px;line-height:1.02;margin:0 0 32px;color:#241B12;letter-spacing:-.015em;">
+        Место, где можно <span style="font-style:italic;color:#8A6F57;">задержаться</span><br>в кресле за чтением.
+      </h2>
+      <p style="font-size:16px;line-height:1.7;color:#3A2418;margin:0 0 18px;max-width:540px;">
+        «Душа» — независимый книжный магазин в историческом центре Ярославля, на улице Кирова, 66. Мы делаем ставку на кураторский подход: художественная проза, качественный нон-фикшн, издания по искусству, саморазвитию и редкие книги от независимых издательств.
+      </p>
+      <p style="font-size:16px;line-height:1.7;color:#3A2418;margin:0 0 36px;max-width:540px;">
+        Мы заботимся об экологии: упаковываем покупки в крафт-бумагу, минимизируем пластик и работаем с издательствами, которые разделяют наши ценности.
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;margin-bottom:40px;">
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#E0A52B;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#241B12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5z"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:17px;color:#241B12;margin-bottom:4px;">Кураторский отбор</div>
+            <div style="font-size:13px;line-height:1.5;color:#5A4A3A;">Каждая книга на полке — выбор нашего редактора.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#E0A52B;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#241B12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:17px;color:#241B12;margin-bottom:4px;">Эко-упаковка</div>
+            <div style="font-size:13px;line-height:1.5;color:#5A4A3A;">Крафт-бумага, без пластика и пузырьковой плёнки.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#E0A52B;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#241B12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:17px;color:#241B12;margin-bottom:4px;">Сообщество</div>
+            <div style="font-size:13px;line-height:1.5;color:#5A4A3A;">Клубы, лекции, встречи с авторами каждую неделю.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#E0A52B;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#241B12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:17px;color:#241B12;margin-bottom:4px;">Местные авторы</div>
+            <div style="font-size:13px;line-height:1.5;color:#5A4A3A;">Отдельная полка для книг ярославских писателей.</div>
+          </div>
+        </div>
+      </div>
+
+      <a href="#contacts" style="color:#241B12;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.06em;display:inline-flex;align-items:center;gap:12px;border-bottom:1.5px solid #E0A52B;padding-bottom:4px;">
+        КАК НАС НАЙТИ
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== BOOKS THAT CHANGED THE WORLD ============== -->
+<section class="classics-section" style="padding:100px 48px;background:linear-gradient(180deg,#F4ECDE 0%,#ECE2D0 100%);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:64px;">
+      <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#8A6F57;margin-bottom:24px;">
+        <span style="width:36px;height:1px;background:#8A6F57;"></span>
+        Выбор редакции
+        <span style="width:36px;height:1px;background:#8A6F57;"></span>
+      </div>
+      <h2 class="section-h2" style="font-family:'Playfair Display',serif;font-weight:500;font-size:84px;line-height:1;margin:0 0 20px;color:#241B12;letter-spacing:-.02em;">
+        Книги, <span style="font-style:italic;color:#8A6F57;">изменившие</span> мир
+      </h2>
+      <p style="font-size:16px;line-height:1.6;color:#5A4A3A;max-width:520px;margin:0 auto;">
+        Проверенные временем шедевры по доступным ценам. Те самые книги, к которым возвращаются всю жизнь.
+      </p>
+    </div>
+
+    <div class="classics-layout" style="display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:stretch;">
+      <!-- Featured -->
+      <div style="background:#241B12;color:#F4ECDE;border-radius:6px;padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;min-height:520px;">
+        <div style="position:absolute;top:0;right:0;width:280px;height:280px;border:1.5px solid #E0A52B;border-radius:50%;transform:translate(40%,-40%);opacity:.4;"></div>
+        <div style="position:absolute;bottom:0;left:0;width:200px;height:200px;border:1.5px solid #B5926B;border-radius:50%;transform:translate(-50%,50%);opacity:.3;"></div>
+        <div id="featured-portrait" style="position:absolute;right:36px;bottom:130px;width:200px;height:260px;color:#E0A52B;opacity:.25;pointer-events:none;"></div>
+
+        <div style="position:relative;z-index:1;">
+          <div style="display:inline-block;background:#E0A52B;color:#241B12;padding:6px 14px;border-radius:999px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:32px;">★ Книга столетия</div>
+          <div style="font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:#B5926B;margin-bottom:18px;">Габриэль Гарсиа Маркес · 1967</div>
+          <h3 style="font-family:'Playfair Display',serif;font-weight:500;font-style:italic;font-size:72px;line-height:.98;margin:0 0 28px;letter-spacing:-.015em;">Сто лет<br>одиночества</h3>
+          <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:18px;line-height:1.5;color:#D4B896;margin:0 0 32px;max-width:380px;">«История семьи Буэндиа — это история всех нас, написанная буквами магического реализма.»</p>
+        </div>
+        <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:24px;border-top:1px solid rgba(212,184,150,.3);flex-wrap:wrap;">
+          <div>
+            <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#B5926B;margin-bottom:6px;">Цена</div>
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:36px;color:#F4ECDE;line-height:1;">690 <span style="color:#E0A52B;font-size:24px;">₽</span></div>
+          </div>
+          <button id="add-featured-btn" class="btn-gold" style="padding:16px 28px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.06em;display:inline-flex;align-items:center;gap:10px;">
+            ДОБАВИТЬ В КОРЗИНУ
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-up classics -->
+      <div id="classics-list" style="display:flex;flex-direction:column;gap:20px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== NEW RELEASES ============== -->
+<section class="new-section" style="padding:120px 48px;max-width:1280px;margin:0 auto;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:56px;gap:48px;flex-wrap:wrap;">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#8A6F57;margin-bottom:20px;">
+        <span style="width:36px;height:1px;background:#8A6F57;"></span>
+        Свежие поставки
+      </div>
+      <h2 class="section-h2" style="font-family:'Playfair Display',serif;font-weight:500;font-size:72px;line-height:1;margin:0;color:#241B12;letter-spacing:-.015em;">
+        Новинки и<br><span style="font-style:italic;color:#8A6F57;">предзаказы</span>
+      </h2>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="icon-btn" style="width:50px;height:50px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="icon-btn" style="width:50px;height:50px;background:#241B12;color:#F4ECDE;border-color:#241B12;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="novelties-grid" class="books-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;"></div>
+</section>
+
+<!-- ============== EVENTS ============== -->
+<section id="events" class="events-section" style="padding:100px 48px;background:#241B12;color:#F4ECDE;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:64px;gap:48px;flex-wrap:wrap;">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#E0A52B;margin-bottom:24px;">
+          <span style="width:36px;height:1px;background:#E0A52B;"></span>
+          Жизнь магазина
+        </div>
+        <h2 class="section-h2" style="font-family:'Playfair Display',serif;font-weight:500;font-size:72px;line-height:1;margin:0;color:#F4ECDE;letter-spacing:-.015em;">
+          Ближайшие<br><span style="font-style:italic;color:#E0A52B;">встречи</span>
+        </h2>
+      </div>
+      <p style="font-size:15px;line-height:1.6;color:#B5926B;max-width:360px;margin:0;">
+        Книжные клубы, встречи с авторами, лекции и тихие вечера чтения. Вход свободный — нужна только запись на сайте.
+      </p>
+    </div>
+
+    <div class="events-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+      <div class="event-card" style="border:1px solid rgba(244,236,222,.15);border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="background:#E0A52B;color:#241B12;padding:14px 18px;border-radius:4px;text-align:center;line-height:1;">
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:34px;">25</div>
+            <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;font-weight:600;">июня</div>
+          </div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B5926B;">19:00 · ср</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#E0A52B;margin-bottom:12px;">Книжный клуб</div>
+          <h3 style="font-family:'Playfair Display',serif;font-weight:500;font-size:28px;line-height:1.1;margin:0 0 14px;">Обсуждаем «<span style="font-style:italic;">Дюну</span>» Фрэнка Герберта</h3>
+          <p style="font-size:13px;line-height:1.55;color:#B5926B;margin:0;">Первая часть саги. Глоток воды и разговоры о власти и пустыне. Модерирует Анна Сергеева.</p>
+        </div>
+        <a href="#" style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#F4ECDE;text-decoration:none;border-bottom:1.5px solid #E0A52B;padding-bottom:3px;align-self:flex-start;">ЗАПИСАТЬСЯ →</a>
+      </div>
+
+      <div class="event-card" style="border:1px solid rgba(244,236,222,.15);border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="background:#E0A52B;color:#241B12;padding:14px 18px;border-radius:4px;text-align:center;line-height:1;">
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:34px;">05</div>
+            <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;font-weight:600;">июля</div>
+          </div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B5926B;">19:30 · сб</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#E0A52B;margin-bottom:12px;">Встреча с автором</div>
+          <h3 style="font-family:'Playfair Display',serif;font-weight:500;font-size:28px;line-height:1.1;margin:0 0 14px;">Алексей Поляринов о «<span style="font-style:italic;">Кадаврах</span>»</h3>
+          <p style="font-size:13px;line-height:1.55;color:#B5926B;margin:0;">Презентация нового романа и разговор про язык, форму и Россию, в которой мы живём.</p>
+        </div>
+        <a href="#" style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#F4ECDE;text-decoration:none;border-bottom:1.5px solid #E0A52B;padding-bottom:3px;align-self:flex-start;">ЗАПИСАТЬСЯ →</a>
+      </div>
+
+      <div class="event-card" style="border:1px solid rgba(244,236,222,.15);border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="background:#E0A52B;color:#241B12;padding:14px 18px;border-radius:4px;text-align:center;line-height:1;">
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:34px;">12</div>
+            <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px;font-weight:600;">июля</div>
+          </div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B5926B;">18:00 · сб</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#E0A52B;margin-bottom:12px;">Лекция</div>
+          <h3 style="font-family:'Playfair Display',serif;font-weight:500;font-size:28px;line-height:1.1;margin:0 0 14px;">Магический реализм: от <span style="font-style:italic;">Маркеса</span> до сегодня</h3>
+          <p style="font-size:13px;line-height:1.55;color:#B5926B;margin:0;">Литературовед Мария Ивлева о том, как Латинская Америка научила всех остальных писать иначе.</p>
+        </div>
+        <a href="#" style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#F4ECDE;text-decoration:none;border-bottom:1.5px solid #E0A52B;padding-bottom:3px;align-self:flex-start;">ЗАПИСАТЬСЯ →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== NEWSLETTER ============== -->
+<section class="newsletter-section" style="padding:120px 48px;background:#F4ECDE;">
+  <div style="max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#B5926B 0%,#8A6F57 100%);border-radius:6px;padding:80px 64px;position:relative;overflow:hidden;">
+    <svg style="position:absolute;top:-60px;right:-60px;opacity:.15;" width="400" height="400" viewBox="0 0 100 100">
+      <circle cx="50" cy="32" r="14" fill="#241B12"/>
+      <circle cx="36" cy="42" r="13" fill="#241B12"/>
+      <circle cx="64" cy="42" r="13" fill="#241B12"/>
+      <rect x="47" y="48" width="6" height="26" fill="#241B12"/>
+      <rect x="28" y="74" width="44" height="5" rx="2.5" fill="#241B12"/>
+      <rect x="22" y="83" width="56" height="5" rx="2.5" fill="#241B12"/>
+    </svg>
+    <div style="position:relative;max-width:580px;">
+      <div style="display:inline-flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#F4ECDE;margin-bottom:28px;opacity:.85;">
+        <span style="width:36px;height:1px;background:#F4ECDE;"></span>
+        Письма от Души
+      </div>
+      <h2 class="section-h2" style="font-family:'Playfair Display',serif;font-weight:500;font-size:56px;line-height:1;margin:0 0 24px;color:#F4ECDE;letter-spacing:-.015em;">
+        Одно письмо в <span style="font-style:italic;">неделю</span> — и ни строчкой больше.
+      </h2>
+      <p style="font-size:15.5px;line-height:1.6;color:rgba(244,236,222,.85);margin:0 0 40px;">
+        Что прочесть на выходные, какие книги пришли на этой неделе, кто приедет в гости. Без спама, без рекламы — только тёплая рассылка от продавцов магазина.
+      </p>
+      <form id="newsletter-form" style="display:flex;gap:0;background:#F4ECDE;padding:6px;border-radius:999px;max-width:520px;">
+        <input id="newsletter-input" type="email" placeholder="ваш@email.ru" required style="flex:1;border:none;outline:none;background:transparent;padding:14px 24px;font-family:'Manrope',sans-serif;font-size:15px;color:#241B12;min-width:0;">
+        <button type="submit" class="btn-dark" style="padding:14px 32px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.08em;white-space:nowrap;">ПОДПИСАТЬСЯ</button>
+      </form>
+      <div id="newsletter-done" class="hidden" style="margin-top:20px;color:#F4ECDE;font-size:13px;opacity:.9;">✓ Спасибо! Первое письмо придёт в воскресенье.</div>
+      <div style="margin-top:18px;font-size:11.5px;color:rgba(244,236,222,.65);">Подписываясь, вы соглашаетесь с политикой обработки данных.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer id="contacts" class="site-footer" style="background:#241B12;color:#F4ECDE;padding:100px 48px 40px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="footer-grid" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:64px;margin-bottom:80px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+          <svg width="56" height="56" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="#8A6F57" stroke="#E0A52B" stroke-width="1.5"/>
+            <circle cx="50" cy="32" r="11" fill="#241B12"/>
+            <circle cx="40" cy="40" r="10" fill="#241B12"/>
+            <circle cx="60" cy="40" r="10" fill="#241B12"/>
+            <rect x="48" y="44" width="4" height="22" fill="#241B12"/>
+            <rect x="34" y="66" width="32" height="4" rx="2" fill="#241B12"/>
+            <rect x="29" y="74" width="42" height="4" rx="2" fill="#241B12"/>
+          </svg>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:32px;font-weight:600;color:#E0A52B;line-height:1;">Душа</div>
+            <div style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#B5926B;margin-top:6px;">книжный · ярославль</div>
+          </div>
+        </div>
+        <p style="font-size:14px;line-height:1.6;color:rgba(244,236,222,.7);margin:0 0 28px;max-width:320px;">
+          Независимый книжный магазин в историческом центре Ярославля. Кураторские подборки, события, кофе и тёплый свет.
+        </p>
+        <div style="display:flex;gap:10px;">
+          <a href="#" class="social-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 0C5 0 0 5 0 11s5 11 11 11 11-5 11-11S17 0 11 0zm5.5 7l-1.8 8.3c-.1.6-.5.7-1 .4l-2.8-2-1.3 1.3c-.1.1-.3.3-.6.3l.2-2.9 5.3-4.8c.2-.2 0-.3-.4-.1l-6.6 4.1-2.8-.9c-.6-.2-.6-.6.1-.9l11.1-4.3c.5-.2.9.1.6 1z"/></svg>
+          </a>
+          <a href="#" class="social-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="social-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-9.5 12.5h-2v-7h2v7zm-1-7.94a1.06 1.06 0 1 1 0-2.12 1.06 1.06 0 0 1 0 2.12zm9.5 7.94h-2v-3.6c0-.86-.31-1.45-1.07-1.45-.58 0-.93.4-1.08.78-.06.14-.07.32-.07.51v3.76h-2v-7h2v.98c.27-.41.74-1 1.81-1 1.32 0 2.31.87 2.31 2.73v4.29z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:#E0A52B;margin-bottom:24px;font-weight:600;">Магазин</div>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;">
+          <a href="#catalog" class="footer-link">Каталог</a>
+          <a href="#popular" class="footer-link">Бестселлеры</a>
+          <a href="#" class="footer-link">Новинки</a>
+          <a href="#" class="footer-link">Подарочные карты</a>
+          <a href="#" class="footer-link">Авторские подборки</a>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:#E0A52B;margin-bottom:24px;font-weight:600;">Информация</div>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;">
+          <a href="#about" class="footer-link">О магазине</a>
+          <a href="#events" class="footer-link">События</a>
+          <a href="#" class="footer-link">Доставка и оплата</a>
+          <a href="#" class="footer-link">Возврат</a>
+          <a href="#" class="footer-link">Книжный клуб</a>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:#E0A52B;margin-bottom:24px;font-weight:600;">Контакты</div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div>
+            <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B5926B;margin-bottom:6px;">Адрес</div>
+            <div style="font-family:'Playfair Display',serif;font-size:16px;color:#F4ECDE;line-height:1.4;">ул. Кирова, 66<br>Ярославль</div>
+          </div>
+          <div>
+            <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B5926B;margin-bottom:6px;">Часы работы</div>
+            <div style="font-size:14px;color:#F4ECDE;line-height:1.5;">пн–чт · 10:00 — 21:00<br>пт–вс · 10:00 — 23:00</div>
+          </div>
+          <div>
+            <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B5926B;margin-bottom:6px;">Связь</div>
+            <a href="tel:+74852123456" style="font-family:'Playfair Display',serif;font-size:17px;color:#F4ECDE;text-decoration:none;display:block;line-height:1.4;">+7 (4852) 12-34-56</a>
+            <a href="mailto:hello@dusha-books.ru" style="font-size:14px;color:rgba(244,236,222,.75);text-decoration:none;">hello@dusha-books.ru</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid rgba(244,236,222,.12);padding-top:32px;display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:12.5px;color:rgba(244,236,222,.55);flex-wrap:wrap;">
+      <div>© 2025 Книжный магазин «Душа». Все права защищены.</div>
+      <div style="display:flex;gap:28px;flex-wrap:wrap;">
+        <a href="#" class="footer-link-muted">Политика конфиденциальности</a>
+        <a href="#" class="footer-link-muted">Пользовательское соглашение</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============== CART DRAWER ============== -->
+<div id="cart-overlay" class="hidden"></div>
+<aside id="cart-drawer" class="hidden">
+  <div style="padding:28px 32px;border-bottom:1px solid rgba(36,27,18,.1);display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#8A6F57;margin-bottom:4px;">Ваша корзина</div>
+      <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:#241B12;">
+        <span id="cart-count-big">0</span> <span id="cart-count-label" style="font-style:normal;font-size:16px;color:#8A6F57;">книг</span>
+      </div>
+    </div>
+    <button id="cart-close-btn" class="icon-btn" style="width:40px;height:40px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;padding:24px 32px;">
+    <div id="cart-items" style="display:flex;flex-direction:column;gap:20px;"></div>
+    <div id="cart-empty" style="text-align:center;padding:60px 20px;color:#8A6F57;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 20px;display:block;opacity:.5;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:#241B12;margin-bottom:8px;">Корзина пуста</div>
+      <div style="font-size:14px;line-height:1.5;">Загляните в каталог — мы собрали для вас лучшие книги недели.</div>
+    </div>
+  </div>
+
+  <div id="cart-footer" class="hidden" style="padding:24px 32px;border-top:1px solid rgba(36,27,18,.1);background:#ECE2D0;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#8A6F57;">Итого</div>
+      <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:30px;color:#241B12;">
+        <span id="cart-total">0</span> <span style="color:#8A6F57;font-size:20px;">₽</span>
+      </div>
+    </div>
+    <div id="delivery-note" style="font-size:12px;color:#8A6F57;margin-bottom:18px;"></div>
+    <button class="btn-dark" style="width:100%;padding:18px;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:.08em;">
+      ОФОРМИТЬ ЗАКАЗ →
+    </button>
+  </div>
+</aside>
+
+<script>
+(() => {
+  'use strict';
+
+  // ============== AUTHOR PORTRAITS (engraving-style line art) ==============
+  const wrap = (paths) => `<svg viewBox="0 0 100 130" preserveAspectRatio="xMidYMid meet" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+  const PORTRAITS = {
+    marquez: wrap(`
+      <path d="M30 48 Q30 25 50 25 Q70 25 70 48 V58 Q70 72 60 78 H40 Q30 72 30 58 Z"/>
+      <path d="M28 35 Q40 28 50 32 Q60 28 72 35"/>
+      <circle cx="42" cy="50" r="1.5" fill="currentColor"/>
+      <circle cx="58" cy="50" r="1.5" fill="currentColor"/>
+      <path d="M50 55 L48 62 L52 62"/>
+      <path d="M40 67 Q45 71 50 67 Q55 71 60 67"/>
+      <path d="M44 75 H56"/>
+      <path d="M18 130 Q18 100 35 92 L40 88 L45 86 L50 100 L55 86 L60 88 L65 92 Q82 100 82 130"/>`),
+    bradbury: wrap(`
+      <path d="M28 48 Q28 25 50 25 Q72 25 72 48"/>
+      <path d="M30 28 L36 35 M40 26 L46 32 M50 25 L56 30 M60 26 L66 32 M70 30 L72 35"/>
+      <path d="M28 48 Q28 70 36 76 Q42 80 50 80 Q58 80 64 76 Q72 70 72 48"/>
+      <circle cx="40" cy="52" r="6.5"/><circle cx="60" cy="52" r="6.5"/>
+      <line x1="46.5" y1="52" x2="53.5" y2="52"/>
+      <path d="M50 60 L48 66 L52 66"/><path d="M44 72 H56"/>
+      <path d="M18 130 Q18 100 35 90 L40 86 L45 84 L50 100 L55 84 L60 86 L65 90 Q82 100 82 130"/>`),
+    bronte: wrap(`
+      <path d="M22 90 Q15 60 22 40 Q35 18 50 20 Q65 18 78 40 Q85 60 78 90"/>
+      <path d="M32 50 Q32 75 50 80 Q68 75 68 50"/>
+      <path d="M32 50 Q32 30 50 30 Q68 30 68 50"/>
+      <path d="M35 32 Q40 26 50 30 Q60 26 65 32"/>
+      <line x1="50" y1="30" x2="50" y2="40"/>
+      <circle cx="42" cy="55" r="1.5" fill="currentColor"/><circle cx="58" cy="55" r="1.5" fill="currentColor"/>
+      <path d="M50 60 L48 67 L52 67"/><path d="M45 73 Q50 76 55 73"/>
+      <path d="M30 130 Q30 100 38 92 Q45 88 50 88 Q55 88 62 92 Q70 100 70 130"/>
+      <path d="M38 92 Q50 96 62 92"/>`),
+    bulgakov: wrap(`
+      <path d="M28 48 Q28 22 50 22 Q72 22 72 48"/>
+      <path d="M28 30 Q35 25 50 24 L65 30 M55 24 L70 35"/>
+      <path d="M28 48 Q28 70 36 78 Q44 82 50 82 Q56 82 64 78 Q72 70 72 48"/>
+      <circle cx="42" cy="52" r="1.5" fill="currentColor"/><circle cx="58" cy="52" r="1.5" fill="currentColor"/>
+      <path d="M50 58 L48 65 L52 65"/><path d="M45 73 H55"/>
+      <path d="M18 130 Q18 100 35 90 L42 88 L45 85 L50 95 L55 85 L58 88 L65 90 Q82 100 82 130"/>
+      <path d="M42 95 L50 92 L58 95 L50 100 Z"/>`),
+    polyarinov: wrap(`
+      <path d="M30 48 Q30 22 50 22 Q70 22 70 48 V55"/>
+      <path d="M30 48 Q30 60 35 65 M70 48 Q70 60 65 65"/>
+      <path d="M30 55 Q30 70 36 78 Q42 82 50 82 Q58 82 64 78 Q70 70 70 55"/>
+      <path d="M35 65 Q35 88 50 92 Q65 88 65 65"/>
+      <circle cx="42" cy="50" r="1.5" fill="currentColor"/><circle cx="58" cy="50" r="1.5" fill="currentColor"/>
+      <path d="M50 55 L48 62 L52 62"/>
+      <path d="M18 130 Q18 100 32 95 Q42 92 50 92 Q58 92 68 95 Q82 100 82 130"/>`),
+    womanBob: wrap(`
+      <path d="M22 60 Q22 20 50 18 Q78 20 78 60 V82 Q78 88 72 88 L65 78"/>
+      <path d="M22 60 V82 Q22 88 28 88 L35 78"/>
+      <path d="M35 35 Q50 30 65 35"/>
+      <path d="M35 40 Q35 70 50 80 Q65 70 65 40"/>
+      <circle cx="43" cy="52" r="1.5" fill="currentColor"/><circle cx="57" cy="52" r="1.5" fill="currentColor"/>
+      <path d="M50 58 L48 65 L52 65"/><path d="M45 73 Q50 76 55 73"/>
+      <path d="M18 130 Q18 100 32 92 Q40 90 50 90 Q60 90 68 92 Q82 100 82 130"/>`),
+    womanBun: wrap(`
+      <ellipse cx="50" cy="16" rx="11" ry="8"/>
+      <path d="M32 38 Q40 24 50 22 Q60 24 68 38"/>
+      <path d="M32 45 Q32 30 50 30 Q68 30 68 45"/>
+      <path d="M32 45 Q32 72 40 80 Q46 84 50 84 Q54 84 60 80 Q68 72 68 45"/>
+      <circle cx="42" cy="50" r="1.5" fill="currentColor"/><circle cx="58" cy="50" r="1.5" fill="currentColor"/>
+      <path d="M50 56 L48 62 L52 62"/><path d="M45 70 Q50 72 55 70"/>
+      <path d="M18 130 Q18 100 35 92 Q42 90 50 90 Q58 90 65 92 Q82 100 82 130"/>`),
+    womanLong: wrap(`
+      <path d="M18 130 Q12 80 18 50 Q24 25 50 22 Q76 25 82 50 Q88 80 82 130"/>
+      <path d="M32 50 Q32 75 50 82 Q68 75 68 50"/>
+      <path d="M32 50 Q32 35 50 35 Q68 35 68 50"/>
+      <path d="M32 40 Q40 32 50 38 Q60 32 68 40"/>
+      <circle cx="42" cy="55" r="1.5" fill="currentColor"/><circle cx="58" cy="55" r="1.5" fill="currentColor"/>
+      <path d="M50 60 L48 67 L52 67"/><path d="M45 75 Q50 78 55 75"/>`),
+  };
+  const portraitHTML = (key) => PORTRAITS[key] || PORTRAITS.marquez;
+
+  // ============== COLOR PALETTES ==============
+  const P = {
+    espresso: { bg: '#241B12', ink: '#F4ECDE', accent: '#E0A52B' },
+    coffee:   { bg: '#8A6F57', ink: '#F4ECDE', accent: '#E0A52B' },
+    kraft:    { bg: '#B5926B', ink: '#241B12', accent: '#241B12' },
+    cream:    { bg: '#F4ECDE', ink: '#241B12', accent: '#8A6F57' },
+    forest:   { bg: '#3A4A3C', ink: '#F4ECDE', accent: '#E0A52B' },
+    claret:   { bg: '#6B2E2E', ink: '#F4ECDE', accent: '#E0A52B' },
+    sand:     { bg: '#D4B896', ink: '#241B12', accent: '#6B2E2E' },
+    ink:      { bg: '#1A2238', ink: '#F4ECDE', accent: '#E0A52B' },
+  };
+
+  // ============== BOOKS ==============
+  const ALL_BOOKS = [
+    // POPULAR
+    { id: 'p1', title: 'Бабушка сказала сидеть тихо', author: 'Настасья Реньжина', price: 790, genre: 'Современная проза', palette: P.claret,   badge: 'Хит', note: 'Лонг-лист «Большой книги»', section: 'popular', portrait: 'womanBob' },
+    { id: 'p2', title: 'Дом, в котором…',              author: 'Мариам Петросян',    price: 1290, genre: 'Магический реализм', palette: P.espresso, badge: '',    note: 'Книга, к которой возвращаются', section: 'popular', portrait: 'womanLong' },
+    { id: 'p3', title: 'Маленькая жизнь',              author: 'Ханья Янагихара',    price: 1490, genre: 'Литературная проза', palette: P.coffee,   badge: '',    note: '',                              section: 'popular', portrait: 'womanBun' },
+    { id: 'p4', title: 'Норвежский лес',               author: 'Харуки Мураками',    price: 890,  genre: 'Современная проза',  palette: P.forest,   badge: '',    note: 'Японская меланхолия',           section: 'popular', portrait: 'bradbury' },
+
+    // CLASSICS
+    { id: 'c1', title: '451° по Фаренгейту',           author: 'Рэй Брэдбери',       price: 490, genre: 'Антиутопия',         palette: P.claret, year: '1953', note: 'Тот самый огонь, что сжигает книги.',             section: 'classics', portrait: 'bradbury' },
+    { id: 'c2', title: 'Грозовой перевал',              author: 'Эмили Бронте',       price: 550, genre: 'Готический роман',   palette: P.ink,    year: '1847', note: 'Любовь как стихия и буря.',                       section: 'classics', portrait: 'bronte' },
+    { id: 'c3', title: 'Мастер и Маргарита',            author: 'Михаил Булгаков',    price: 620, genre: 'Магический реализм', palette: P.kraft,  year: '1967', note: 'Москва, дьявол, рукопись, которая не горит.',     section: 'classics', portrait: 'bulgakov' },
+
+    // NEW
+    { id: 'n1', title: 'Тоннель',                      author: 'Яна Вагнер',         price: 950,  genre: 'Триллер',             palette: P.ink,    badge: 'Новинка',   section: 'new', portrait: 'womanLong' },
+    { id: 'n2', title: 'Кадавры',                      author: 'Алексей Поляринов',  price: 1090, genre: 'Современная проза',   palette: P.sand,   badge: 'Новинка',   section: 'new', portrait: 'polyarinov' },
+    { id: 'n3', title: 'Каждые сто лет',               author: 'Анна Матвеева',      price: 890,  genre: 'Семейная сага',       palette: P.cream,  badge: 'Новинка',   section: 'new', portrait: 'womanBun' },
+    { id: 'n4', title: 'Безбожный переулок',           author: 'Марина Степнова',    price: 790,  genre: 'Литературная проза',  palette: P.coffee, badge: 'Предзаказ', section: 'new', portrait: 'womanBob' },
+  ];
+  const FEATURED = { id: 'c-featured', title: 'Сто лет одиночества', author: 'Габриэль Гарсиа Маркес', price: 690, palette: P.espresso, portrait: 'marquez' };
+
+  // ============== STATE ==============
+  const state = { cart: {}, cartOpen: false, filter: 'all', newsletterDone: false };
+  const lookup = Object.fromEntries([...ALL_BOOKS, FEATURED].map(b => [b.id, b]));
+
+  const esc = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+  function pluralBooks(n) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return 'книга';
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'книги';
+    return 'книг';
+  }
+
+  // ============== RENDER: BIG CARD (popular + new) ==============
+  function bigCard(b) {
+    const pal = b.palette;
+    const badge = b.badge
+      ? `<span style="position:absolute;top:14px;right:14px;background:${pal.accent};color:${pal.bg};padding:4px 9px;border-radius:3px;font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">${esc(b.badge)}</span>`
+      : '';
+    const note = b.note
+      ? `<div style="font-size:12px;line-height:1.45;color:#8A6F57;font-style:italic;margin-bottom:14px;">— ${esc(b.note)}</div>`
+      : '';
+    return `
+      <div class="book-card" data-genre="${esc(b.genre)}" style="display:flex;flex-direction:column;gap:16px;">
+        <div class="cover" style="position:relative;aspect-ratio:3 / 4.2;background:${pal.bg};border-radius:4px;padding:28px 22px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;box-shadow:0 4px 20px rgba(36,27,18,.08);">
+          ${badge}
+          <div style="font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:${pal.ink};opacity:.75;">${esc(b.author)}</div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px 0;">
+            <div style="width:92px;height:118px;color:${pal.ink};opacity:.85;">${portraitHTML(b.portrait)}</div>
+            <div style="width:28px;height:1px;background:${pal.accent};opacity:.55;"></div>
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:24px;line-height:1.05;color:${pal.ink};text-align:center;text-wrap:balance;">${esc(b.title)}</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:${pal.ink};opacity:.55;">${esc(b.genre)}</div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${pal.accent}" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10" opacity=".4"/><path d="M8 12l4 4 4-8"/></svg>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8A6F57;margin-bottom:6px;">${esc(b.author)}</div>
+          <div style="font-family:'Playfair Display',serif;font-weight:500;font-size:19px;line-height:1.2;color:#241B12;margin-bottom:8px;">${esc(b.title)}</div>
+          ${note}
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;">
+            <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:22px;color:#241B12;">${b.price} <span style="color:#8A6F57;font-size:16px;">₽</span></div>
+            <button class="btn-outline add-to-cart" data-id="${esc(b.id)}" style="padding:9px 16px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              В корзину
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ============== RENDER: CLASSIC ROW ==============
+  function classicRow(b) {
+    const pal = b.palette;
+    return `
+      <div class="classic-row" style="background:#F4ECDE;border:1px solid rgba(36,27,18,.08);border-radius:4px;padding:20px;display:grid;grid-template-columns:100px 1fr auto;gap:24px;align-items:center;">
+        <div style="aspect-ratio:3 / 4.2;background:${pal.bg};border-radius:3px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:4px;">
+          <div style="font-size:6px;letter-spacing:.14em;text-transform:uppercase;color:${pal.ink};opacity:.65;align-self:flex-start;">${esc(b.author)}</div>
+          <div style="width:44px;height:56px;color:${pal.ink};opacity:.85;">${portraitHTML(b.portrait)}</div>
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:10px;line-height:1;color:${pal.ink};text-align:center;">${esc(b.title)}</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#8A6F57;margin-bottom:6px;">${esc(b.author)} · ${esc(b.year)}</div>
+          <div style="font-family:'Playfair Display',serif;font-weight:500;font-size:22px;line-height:1.15;color:#241B12;margin-bottom:8px;">${esc(b.title)}</div>
+          <div style="font-size:12px;line-height:1.5;color:#5A4A3A;">${esc(b.note)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+          <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:22px;color:#241B12;">${b.price} <span style="color:#8A6F57;font-size:15px;">₽</span></div>
+          <button class="add-circle add-to-cart" data-id="${esc(b.id)}" aria-label="В корзину">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }
+
+  // ============== RENDER: CART ITEM ==============
+  function cartItemHTML(b, qty) {
+    const pal = b.palette;
+    return `
+      <div style="display:grid;grid-template-columns:72px 1fr auto;gap:18px;align-items:center;padding-bottom:20px;border-bottom:1px solid rgba(36,27,18,.08);">
+        <div style="aspect-ratio:3 / 4.2;background:${pal.bg};border-radius:3px;padding:8px 6px;display:flex;align-items:center;justify-content:center;">
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:10px;line-height:1;color:${pal.ink};text-align:center;">${esc(b.title)}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#8A6F57;margin-bottom:4px;">${esc(b.author)}</div>
+          <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:500;color:#241B12;line-height:1.2;margin-bottom:10px;">${esc(b.title)}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="qty-btn" data-action="dec" data-id="${esc(b.id)}" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(36,27,18,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#241B12;font-size:14px;">−</button>
+            <span style="font-size:14px;font-weight:600;min-width:20px;text-align:center;">${qty}</span>
+            <button class="qty-btn" data-action="inc" data-id="${esc(b.id)}" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(36,27,18,.2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#241B12;font-size:14px;">+</button>
+          </div>
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-weight:600;font-size:17px;color:#241B12;">${b.price * qty} ₽</div>
+      </div>`;
+  }
+
+  // ============== RENDER MAIN ==============
+  function renderBooks() {
+    const popularGrid  = document.getElementById('popular-grid');
+    const noveltiesGrid = document.getElementById('novelties-grid');
+    const classicsList  = document.getElementById('classics-list');
+
+    const popular = ALL_BOOKS.filter(b => b.section === 'popular');
+    const filtered = state.filter === 'all' ? popular : popular.filter(b => b.genre === state.filter);
+
+    popularGrid.innerHTML = (filtered.length ? filtered : popular).map(bigCard).join('');
+    noveltiesGrid.innerHTML = ALL_BOOKS.filter(b => b.section === 'new').map(bigCard).join('');
+    classicsList.innerHTML  = ALL_BOOKS.filter(b => b.section === 'classics').map(classicRow).join('');
+
+    document.getElementById('featured-portrait').innerHTML = portraitHTML(FEATURED.portrait);
+  }
+
+  function renderCart() {
+    const items = Object.entries(state.cart).map(([id, qty]) => ({ b: lookup[id], qty })).filter(x => x.b);
+    const count = items.reduce((s, x) => s + x.qty, 0);
+    const total = items.reduce((s, x) => s + x.b.price * x.qty, 0);
+    const remaining = Math.max(0, 1500 - total);
+
+    document.getElementById('cart-badge').textContent     = count;
+    document.getElementById('cart-count-big').textContent  = count;
+    document.getElementById('cart-count-label').textContent = pluralBooks(count);
+    document.getElementById('cart-total').textContent      = total;
+    document.getElementById('delivery-note').textContent   = remaining > 0
+      ? `До бесплатной доставки осталось ${remaining} ₽`
+      : 'Доставка бесплатно ✓';
+
+    const itemsEl = document.getElementById('cart-items');
+    const emptyEl = document.getElementById('cart-empty');
+    const footerEl = document.getElementById('cart-footer');
+
+    if (count === 0) {
+      itemsEl.innerHTML = '';
+      emptyEl.classList.remove('hidden');
+      footerEl.classList.add('hidden');
+    } else {
+      itemsEl.innerHTML = items.map(x => cartItemHTML(x.b, x.qty)).join('');
+      emptyEl.classList.add('hidden');
+      footerEl.classList.remove('hidden');
+    }
+  }
+
+  function renderDrawer() {
+    const overlay = document.getElementById('cart-overlay');
+    const drawer  = document.getElementById('cart-drawer');
+    if (state.cartOpen) {
+      overlay.classList.remove('hidden');
+      drawer.classList.remove('hidden');
+      drawer.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    } else {
+      overlay.classList.add('hidden');
+      drawer.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ============== ACTIONS ==============
+  function addToCart(id) {
+    state.cart[id] = (state.cart[id] || 0) + 1;
+    renderCart();
+  }
+  function removeFromCart(id) {
+    if (!state.cart[id]) return;
+    if (state.cart[id] > 1) state.cart[id]--;
+    else delete state.cart[id];
+    renderCart();
+  }
+  function toggleCart() {
+    state.cartOpen = !state.cartOpen;
+    renderDrawer();
+  }
+
+  // ============== EVENT WIRING ==============
+  document.addEventListener('click', (e) => {
+    const addBtn = e.target.closest('.add-to-cart');
+    if (addBtn) { addToCart(addBtn.dataset.id); return; }
+
+    const qtyBtn = e.target.closest('.qty-btn');
+    if (qtyBtn) {
+      if (qtyBtn.dataset.action === 'inc') addToCart(qtyBtn.dataset.id);
+      else removeFromCart(qtyBtn.dataset.id);
+      return;
+    }
+
+    const chip = e.target.closest('.filter-chip');
+    if (chip) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.filter = chip.dataset.filter;
+      renderBooks();
+      return;
+    }
+  });
+
+  document.getElementById('cart-open-btn').addEventListener('click', toggleCart);
+  document.getElementById('cart-close-btn').addEventListener('click', toggleCart);
+  document.getElementById('cart-overlay').addEventListener('click', toggleCart);
+  document.getElementById('add-featured-btn').addEventListener('click', () => addToCart(FEATURED.id));
+
+  document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = document.getElementById('newsletter-input').value.trim();
+    if (!v) return;
+    document.getElementById('newsletter-done').classList.remove('hidden');
+    document.getElementById('newsletter-input').value = '';
+  });
+
+  // Esc to close cart
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.cartOpen) toggleCart();
+  });
+
+  // ============== INIT ==============
+  renderBooks();
+  renderCart();
+  renderDrawer();
+})();
+</script>
+</body>
+</html>
